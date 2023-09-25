@@ -1,5 +1,6 @@
 include stdlib
 # blabla
+
 file_line { 'disable PasswordAuthentication':
   ensure => present,
   path   => '/etc/ssh/ssh_config',
