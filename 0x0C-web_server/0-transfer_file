@@ -1,5 +1,4 @@
 #!/bin/bash
-
 # Check if all 4 parameters are provided
 
 if [ $# -lt 3 ];
