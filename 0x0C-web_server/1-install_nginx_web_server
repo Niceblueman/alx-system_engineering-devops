@@ -1,0 +1,26 @@
+#!/bin/bash
+
+# Update package lists and install Nginx with the -y flag to automatically answer "yes" to prompts
+sudo -s
+apt-get update -y
+apt-get install nginx -y
+
+# Check if Nginx installation was successful
+if [ $? -ne 0 ]; then
+    echo "Nginx installation failed."
+    exit 1
+fi
+
+# Create a custom HTML file with "Hello World!" content
+echo "Hello World!" > /var/www/html/index.html
+
+# Restart Nginx (don't use systemctl nginx restart)
+service nginx restart
+
+# Check if Nginx restart was successful
+if [ $? -ne 0 ]; then
+    echo "Nginx restart failed."
+    exit 1
+fi
+
+echo "Nginx is installed and configured successfully."

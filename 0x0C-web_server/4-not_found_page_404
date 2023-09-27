@@ -1,0 +1,43 @@
+#!/bin/bash
+
+
+# Create a custom HTML file for the 404 page
+sudo tee /var/www/html/404.html > /dev/null <<EOL
+Ceci n'est pas une page
+EOL
+
+# Configure Nginx to use the custom 404 page
+sudo bash -c 'cat <<EOF > /etc/nginx/sites-available/custom404
+server {
+    listen 80 default_server;
+    listen [::]:80 default_server;
+    root /var/www/html;
+    index index.html index.htm;
+    server_name _;
+
+    location / {
+        try_files \$uri \$uri/ =404;
+    }
+
+    error_page 404 /404.html;
+    location = /404.html {
+        internal;
+    }
+}
+EOF'
+
+# Enable the custom 404 configuration
+sudo ln -s /etc/nginx/sites-available/custom404 /etc/nginx/sites-enabled/
+
+# Test the Nginx configuration and handle errors
+if sudo nginx -t; then
+    # If the configuration is valid, reload Nginx
+    sudo systemctl reload nginx
+    echo "Nginx configuration reloaded."
+else
+    # If there are errors, display an error message and exit
+    echo "Nginx configuration test failed. Please check your configuration."
+    exit 1
+fi
+
+echo "Custom 404 page with 'Ceci n'est pas une page' string configured successfully."
