@@ -1,32 +1,20 @@
 #!/usr/bin/env bash
+# redirect to my website
 
-# Nginx server configuration
-SERVER_CONFIG="
-# redirect to my website https://dup.company
-server {
-    listen 80 default_server;
+apt-get update
+apt-get install -y nginx
+
+mkdir /etc/nginx/html
+touch /etc/nginx/html/index.html
+echo "Hello Word!" > /etc/nginx/html/index.html
+printf %s "server {
+    listen 80;
     listen [::]:80 default_server;
-    root /var/www/html;
-    index index.html index.htm index.nginx-debian.html;
-    server_name _;
-    location / {
-        try_files \$uri \$uri/ =404;
+    root   /etc/nginx/html;
+    index  index.html index.htm;
+    location /redirect_me {
+        return 301 https://dup.company;
     }
-    if (\$request_filename ~* \"redirect_me\") {
-        rewrite ^/(.*)$ https://dup.company permanent;
-    }
-}"
+}" > /etc/nginx/sites-available/default
 
-# Write the Nginx server configuration to the default site
-echo -e "$SERVER_CONFIG" | sudo tee /etc/nginx/sites-enabled/default > /dev/null
-
-# Test the Nginx configuration and handle errors
-if nginx -t; then
-    # If the configuration is valid, reload Nginx
-    sudo nginx -s reload
-    echo "Nginx configuration reloaded."
-else
-    # If there are errors, display an error message and exit
-    echo "Nginx configuration test failed. Please check your configuration."
-    exit 1
-fi
+service nginx restart
