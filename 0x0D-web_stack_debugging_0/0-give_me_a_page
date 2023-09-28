@@ -1,3 +1,5 @@
-#!/usr/bin/env bash                                                             
-# to start apache2 inside docker                                                     
-service apache2 start
+#!/usr/bin/env bash
+# start apatch server and return hello
+echo "Hello Holberton" > /var/www/html/index.html
+sudo service apache2 status
+service apache2 restart
