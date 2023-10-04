@@ -2,7 +2,8 @@
 
 
 <div class="panel-body">
-    <p><img src="https://s3.amazonaws.com/intranet-projects-files/holbertonschool-sysadmin_devops/275/qfdked8.png" alt="" loading="lazy" style=""></p>
+<h2>Statistics Report</h2>
+<a href="admin:your_password_here@http://100.27.13.221:8080/haproxy?stats#hbnb/364825-web-01"><img src="https://i.ibb.co/BnkzRhm/Screenshot-2023-10-04-at-18-27-21-Statistics-Report-for-HAProxy.png" alt="Screenshot-2023-10-04-at-18-27-21-Statistics-Report-for-HAProxy" border="0"></a>
 
 <h2>Background Context</h2>
 
