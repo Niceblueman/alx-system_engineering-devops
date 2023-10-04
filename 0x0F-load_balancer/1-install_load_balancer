@@ -11,25 +11,36 @@ mv /etc/haproxy/haproxy.cfg{,.original}
 touch /etc/haproxy/haproxy.cfg
 
 printf %s "global
-    log 127.0.0.1 local0 notice
+    log /dev/log local0
     maxconn 2000
     user haproxy
     group haproxy
+
 defaults
-    log     global
-    mode    http
-    option  httplog
-    option  dontlognull
+    log global
+    mode http
+    option httplog
+    option dontlognull
     retries 3
     option redispatch
-    timeout connect  5000
-    timeout client  10000
-    timeout server  10000
-listen hbnb
-    bind 0.0.0.0:80
+    timeout connect 5000
+    timeout client 10000
+    timeout server 10000
+
+# Enable HAProxy statistics on port 8080
+listen stats
+    bind *:8080
     mode http
     stats enable
     stats uri /haproxy?stats
+    stats auth admin:your_password_here  # Change to a secure password
+
+frontend http-in
+    bind *:80
+    mode http
+    default_backend hbnb
+
+backend hbnb
     balance roundrobin
     option httpclose
     option forwardfor
