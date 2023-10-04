@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # install and add configuration to haproxy servie
 sudo usermod -aG sudo ubuntu
+sudo -s
 apt-get install -y software-properties-common
 add-apt-repository -y ppa:vbernat/haproxy-1.8
 apt-get update
@@ -44,8 +45,8 @@ backend hbnb
     balance roundrobin
     option httpclose
     option forwardfor
-    server 364825-web-01 54.210.79.93:80 check
-    server 364825-web-02 52.3.251.135:80 check
+    server 364825-web-01 100.27.13.221:80 check
+    server 364825-web-02 54.210.79.93:80 check
 " >> /etc/haproxy/haproxy.cfg
 
 service haproxy start
