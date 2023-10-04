@@ -34,7 +34,7 @@ listen stats
     mode http
     stats enable
     stats uri /haproxy?stats
-    stats auth admin:your_password_here  # Change to a secure password
+    stats auth admin:admin  # Change to a secure password
 
 frontend http-in
     bind *:80
