@@ -1,0 +1,100 @@
+#!/bin/bash
+
+#
+# This script is not fully tested against data safety. Backup data and use at your own risk.
+# To get available MySQL 5.7 versions, refer to https://dev.mysql.com/doc/relnotes/mysql/5.7/en/
+#
+
+version=$(cat /etc/*release | grep -Po '(?<=^VERSION_ID=")[0-9.]+')
+sys_name=$(cat /etc/*release | grep -Po '(?<=^NAME=").*(?=")')
+
+if [ "$sys_name" == 'Ubuntu' ] && [ "$version" == '20.04' ]; then
+    echo "This script only installs a specific minor version of MySQL 5.7."
+
+   
+else
+    echo "This script only runs on Ubuntu 14.04 system. Abort."
+    exit 1
+fi
+
+echo "Please note that this script only runs with root privilege."
+echo "If you are running with a user that needs password with sudo, you will need to enter your password now and probably later again."
+
+if sudo echo -n ""
+then
+    echo "Root privilege check PASS."
+else
+    echo "Root privilege check FAIL. Abort."
+    exit 1
+fi
+
+echo -n "Enter the minor version you want, e.g. for 5.7.33 in just type 33 and press [ENTER]: "
+read -r version
+
+if [[ ! $version =~ ^[0-9]+$ ]];then
+    echo "'${version}' isn't a valid number. Abort."
+    exit 1
+fi
+
+full_version="5.7.$version"
+
+# version_match(package_name)
+#
+# Returns 0 if the specified version of package is installed,
+# otherwise returns 1.
+version_match() {
+    test $(sudo dpkg -s "$1" | grep -Po '(?<=^Version:\s)[0-9.]+') == "$full_version"
+    return $?
+}
+
+# check for installed version
+if version_match "mysql-server" && \
+    version_match "mysql-community-server" && \
+    version_match "mysql-client" && \
+    version_match "mysql-community-client" && \
+    version_match "mysql-common"; then
+
+    printf "\\nMySQL %s already installed. Abort.\\n\\n" "$full_version"
+    exit 0
+fi
+
+exit 0
+
+tmp_dir=$(mktemp -d)
+download_dir="$tmp_dir/mysql-server_$full_version"
+mkdir "$download_dir"
+
+printf "Downloading install package for MySQL %s to $download_dir.\\n\\n" "$full_version"
+
+if ! wget -q "https://dev.mysql.com/get/Downloads/MySQL-5.7/mysql-server_$full_version-1ubuntu14.04_amd64.deb-bundle.tar" -O "$download_dir/bundle.tar"
+then
+    echo "Error downloading. Exit."
+    exit 1;
+fi
+
+echo "Removing old packages..."
+sudo dpkg -r "mysql-server" && \
+sudo dpkg -r "mysql-community-server" && \
+sudo dpkg -r "mysql-client" && \
+sudo dpkg -r "mysql-community-client" && \
+sudo dpkg -r "mysql-common"
+
+if [ $? != 0 ]; then
+    printf "\\nError removing old packages. Abort for safe.\\n"
+    exit 1
+fi
+
+echo "Installing new packages..."
+cd "$download_dir" && tar xf bundle.tar
+sudo dpkg -i "mysql-common_$full_version-1ubuntu14.04_amd64.deb" && \
+sudo dpkg -i "mysql-community-client_$full_version-1ubuntu14.04_amd64.deb" && \
+sudo dpkg -i "mysql-client_$full_version-1ubuntu14.04_amd64.deb" && \
+sudo dpkg -i "mysql-community-server_$full_version-1ubuntu14.04_amd64.deb" && \
+sudo dpkg -i "mysql-server_$full_version-1ubuntu14.04_amd64.deb"
+
+if [ $? != 0 ]; then
+    printf "\\nError installing. Sorry but you have to fix manually.\\n"
+    exit 1
+fi
+
+printf "\\nMySQL %s installed successfully.\\n" "$full_version"
