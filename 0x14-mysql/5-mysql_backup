@@ -1,16 +1,6 @@
  #!/usr/bin/env bash
 # Check if the correct number of arguments is provided
-if [ "$#" -ne 1 ]; then
-    echo "Usage: $0 <mysql_password>"
-    exit 1
-fi
-# Set the password for MySQL root user
-password=$1
-# Set the date format
 date=$(date +'%d-%m-%Y')
-# Dump all MySQL databases to a backup.sql file
-MYSQL_PASSWORD="$password" sudo mysqldump -uroot --all-databases 2>&1>"backup.sql"
-# Compress the backup.sql file to a tar.gz archive
+MYSQL_PASSWORD="$1" sudo mysqldump -uroot --all-databases 2>&1>"backup.sql"
 tar -czvf "$date.tar.gz" "backup.sql"
-# Clean up the backup.sql file
 rm "backup.sql"
