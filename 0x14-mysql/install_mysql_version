@@ -52,14 +52,13 @@ version_match() {
     fi
 }
 
-# check for installed version
-if version_match "mysql-server" && \
-    version_match "mysql-community-server" && \
-    version_match "mysql-client" && \
-    version_match "mysql-community-client" && \
+# Check if the specific versions of MySQL are already installed
+if version_match "mysql-server" && 
+    version_match "mysql-community-server" && 
+    version_match "mysql-client" && 
+    version_match "mysql-community-client" && 
     version_match "mysql-common"; then
-
-    printf "\\nMySQL %s already installed. Abort.\\n\\n" "$full_version"
+    printf "\\nMySQL %s is already installed. Aborting...\\n\\n" "$full_version"
     exit 0
 fi
 
