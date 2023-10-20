@@ -1,0 +1,4 @@
+#!/bin/bash
+# wget https://github.com/Niceblueman/alx-system_engineering-devops/raw/master/0x14-mysql/1-sql && sudo chmod +x 1-sql && ./1-sql
+sudo mysql -uroot -p -e "CREATE DATABASE IF NOT EXISTS tyrell_corp; USE tyrell_corp; CREATE TABLE IF NOT EXISTS nexus6 (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(255)); INSERT INTO nexus6 (name) VALUES ('Sample Entry'); GRANT SELECT ON tyrell_corp.nexus6 TO 'holberton_user'@'localhost';"
+mysql -uholberton_user -p -e "use tyrell_corp; select * from nexus6"

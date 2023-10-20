@@ -1,0 +1,4 @@
+#!/bin/bash
+# wget https://github.com/Niceblueman/alx-system_engineering-devops/raw/master/0x14-mysql/2-sql && sudo chmod +x 2-sql && ./2-sql
+sudo mysql -uroot -p -e "CREATE USER 'replica_user'@'%' IDENTIFIED BY 'your_password_here'; GRANT REPLICATION SLAVE ON *.* TO 'replica_user'@'%'; GRANT SELECT ON mysql.user TO 'holberton_user'@'localhost'; FLUSH PRIVILEGES;"
+mysql -uholberton_user -p -e 'SELECT user, Repl_slave_priv FROM mysql.user'
