@@ -66,7 +66,7 @@ mkdir "$download_dir"
 
 printf "Downloading install package for MySQL %s to $download_dir.\\n\\n" "$full_version"
 
-if ! wget -q "https://dev.mysql.com/get/Downloads/MySQL-5.7/mysql-server_$full_version-1ubuntu14.04_amd64.deb-bundle.tar" -O "$download_dir/bundle.tar"
+if ! wget -q "https://github.com/mysql/mysql-server/archive/refs/tags/mysql-$full_version.tar.gz" -O "$download_dir/bundle.tar"
 then
     echo "Error downloading. Exit."
     exit 1;
