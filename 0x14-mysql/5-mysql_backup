@@ -2,5 +2,5 @@
 # Check if the correct number of arguments is provided
 date=$(date +'%d-%m-%Y')
 MYSQL_PASSWORD="$1" sudo mysqldump -uroot --all-databases >"backup.sql"
-tar -czvf "$date.tar.gz" "backup.sql"
-rm "backup.sql"
+sudo tar -czvf "$date.tar.gz" "backup.sql"
+sudo rm "backup.sql"
