@@ -1,3 +1,5 @@
 #!/usr/bin/env bash
 # pass in a username as the first argument to this script
-sudo -u "$1" whoami
+if id "$1" >/dev/null 2>&1; then
+    sudo -u "$1" whoami
+fi
