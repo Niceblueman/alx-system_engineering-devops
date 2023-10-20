@@ -1,3 +1,5 @@
+#!/bin/bash
+# wget https://github.com/Niceblueman/alx-system_engineering-devops/raw/master/0x14-mysql/install_mysql_version
 cat << EOF | sudo tee /etc/apt/sources.list.d/mysql.list
 ### THIS FILE IS AUTOMATICALLY CONFIGURED ###
 # You may comment out entries below, but any other modifications may be lost.
