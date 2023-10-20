@@ -1,6 +1,5 @@
 #!/bin/bash
 # wget https://github.com/Niceblueman/alx-system_engineering-devops/raw/master/0x14-mysql/0-sql && sudo chmod +x 0-sql && ./0-sql
 cat << EOF | sudo mysql -u root -p
-CREATE USER 'holberton_user'@'localhost' IDENTIFIED BY 'projectcorrection280hbtn';
-GRANT REPLICATION CLIENT ON *.* TO 'holberton_user'@'localhost';
+GRANT REPLICATION CLIENT ON *.* TO 'holberton_user'@'localhost' IDENTIFIED BY 'projectcorrection280hbtn';
 EOF
