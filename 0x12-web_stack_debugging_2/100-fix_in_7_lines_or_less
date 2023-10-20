@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 # fixes the default nginx config to use port 8080 instead of 80
-sed -i "s/#user www-data/user nginx/" /etc/nginx/nginx.conf
-sed -i "s/80/8080/g" /etc/nginx/sites-available/default
 chmod 644 /etc/nginx/nginx.conf
-pkill apache2
-sudo -u nginx service nginx start
+sed -i -E 's/^user .*;$/user nginx;/' /etc/nginx/nginx.conf
+sed -i -E 's/listen\s+.*:80;/listen 8080;/' /etc/nginx/sites-available/default
+sudo -u nginx service nginx restart
