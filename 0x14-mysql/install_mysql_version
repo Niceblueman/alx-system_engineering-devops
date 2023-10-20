@@ -43,8 +43,13 @@ full_version="5.7.$version"
 # Returns 0 if the specified version of package is installed,
 # otherwise returns 1.
 version_match() {
-    test $(sudo dpkg -s "$1" | grep -Po '(?<=^Version:\s)[0-9.]+') == "$full_version"
-    return $?
+    local package_version
+    package_version=$(sudo dpkg -s "$1" 2>/dev/null | grep -Po '(?<=^Version:\s)[0-9.]+')
+    if [ -n "$package_version" ] && [ "$package_version" = "$full_version" ]; then
+        return 0
+    else
+        return 1
+    fi
 }
 
 # check for installed version
