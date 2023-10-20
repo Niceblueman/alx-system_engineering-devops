@@ -1,104 +1,18 @@
-#!/bin/bash
-
-#
-# This script is not fully tested against data safety. Backup data and use at your own risk.
-# To get available MySQL 5.7 versions, refer to https://dev.mysql.com/doc/relnotes/mysql/5.7/en/
-#
-
-version=$(cat /etc/*release | grep -Po '(?<=^VERSION_ID=")[0-9.]+')
-sys_name=$(cat /etc/*release | grep -Po '(?<=^NAME=").*(?=")')
-
-if [ "$sys_name" == 'Ubuntu' ] && [ "$version" == '20.04' ]; then
-    echo "This script only installs a specific minor version of MySQL 5.7."
-
-   
-else
-    echo "This script only runs on Ubuntu 14.04 system. Abort."
-    exit 1
-fi
-
-echo "Please note that this script only runs with root privilege."
-echo "If you are running with a user that needs password with sudo, you will need to enter your password now and probably later again."
-
-if sudo echo -n ""
-then
-    echo "Root privilege check PASS."
-else
-    echo "Root privilege check FAIL. Abort."
-    exit 1
-fi
-
-echo -n "Enter the minor version you want, e.g. for 5.7.33 in just type 33 and press [ENTER]: "
-read -r version
-
-if [[ ! $version =~ ^[0-9]+$ ]];then
-    echo "'${version}' isn't a valid number. Abort."
-    exit 1
-fi
-
-full_version="5.7.$version"
-
-# version_match(package_name)
-#
-# Returns 0 if the specified version of package is installed,
-# otherwise returns 1.
-version_match() {
-    local package_version
-    package_version=$(sudo dpkg -s "$1" 2>/dev/null | grep -Po '(?<=^Version:\s)[0-9.]+')
-    if [ -n "$package_version" ] && [ "$package_version" = "$full_version" ]; then
-        return 0
-    else
-        return 1
-    fi
-}
-
-# Check if the specific versions of MySQL are already installed
-if version_match "mysql-server" && 
-    version_match "mysql-community-server" && 
-    version_match "mysql-client" && 
-    version_match "mysql-community-client" && 
-    version_match "mysql-common"; then
-    printf "\\nMySQL %s is already installed. Aborting...\\n\\n" "$full_version"
-    exit 0
-fi
-
-exit 0
-
-tmp_dir=$(mktemp -d)
-download_dir="$tmp_dir/mysql-server_$full_version"
-mkdir "$download_dir"
-
-printf "Downloading install package for MySQL %s to $download_dir.\\n\\n" "$full_version"
-
-if ! wget -q "https://github.com/mysql/mysql-server/archive/refs/tags/mysql-$full_version.tar.gz" -O "$download_dir/bundle.tar"
-then
-    echo "Error downloading. Exit."
-    exit 1;
-fi
-
-echo "Removing old packages..."
-sudo dpkg -r "mysql-server" && \
-sudo dpkg -r "mysql-community-server" && \
-sudo dpkg -r "mysql-client" && \
-sudo dpkg -r "mysql-community-client" && \
-sudo dpkg -r "mysql-common"
-
-if [ $? != 0 ]; then
-    printf "\\nError removing old packages. Abort for safe.\\n"
-    exit 1
-fi
-
-echo "Installing new packages..."
-cd "$download_dir" && tar xf bundle.tar
-sudo dpkg -i "mysql-common_$full_version-1ubuntu14.04_amd64.deb" && \
-sudo dpkg -i "mysql-community-client_$full_version-1ubuntu14.04_amd64.deb" && \
-sudo dpkg -i "mysql-client_$full_version-1ubuntu14.04_amd64.deb" && \
-sudo dpkg -i "mysql-community-server_$full_version-1ubuntu14.04_amd64.deb" && \
-sudo dpkg -i "mysql-server_$full_version-1ubuntu14.04_amd64.deb"
-
-if [ $? != 0 ]; then
-    printf "\\nError installing. Sorry but you have to fix manually.\\n"
-    exit 1
-fi
-
-printf "\\nMySQL %s installed successfully.\\n" "$full_version"
+cat << EOF | sudo tee /etc/apt/sources.list.d/mysql.list
+### THIS FILE IS AUTOMATICALLY CONFIGURED ###
+# You may comment out entries below, but any other modifications may be lost.
+# Use command 'dpkg-reconfigure mysql-apt-config' as root for modifications.
+deb http://repo.mysql.com/apt/ubuntu/ bionic mysql-apt-config
+deb http://repo.mysql.com/apt/ubuntu/ bionic mysql-5.7
+deb http://repo.mysql.com/apt/ubuntu/ bionic mysql-tools
+deb http://repo.mysql.com/apt/ubuntu/ bionic mysql-tools-preview
+deb-src http://repo.mysql.com/apt/ubuntu/ bionic mysql-5.7
+EOF
+sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 467B942D3A79BD29
+sudo apt update
+sudo apt-cache policy mysql-server
+sudo apt install -f mysql-client=5.7* mysql-community-server=5.7* mysql-server=5.7* mysql-community-client=5.7*
+sudo mysql_secure_installation
+cat << EOF | mysql -u root -p
+SELECT VERSION();
+EOF
