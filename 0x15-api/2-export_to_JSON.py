@@ -5,8 +5,6 @@ import requests
 import sys
 
 if __name__ == "__main__":
-    """_summary_
-    """
     user_id = sys.argv[1]
     url = "https://jsonplaceholder.typicode.com/"
     user = requests.get(url + "users/{}".format(user_id)).json()
@@ -15,7 +13,7 @@ if __name__ == "__main__":
 
     with open("{}.json".format(user_id), "w") as jsonfile:
         json.dump({user_id: [{
-                "task": t.get("title"),
-                "completed": t.get("completed"),
-                "username": username
-            } for t in todos]}, jsonfile)
+            "task": t.get("title"),
+            "completed": t.get("completed"),
+            "username": username
+        } for t in todos]}, jsonfile)

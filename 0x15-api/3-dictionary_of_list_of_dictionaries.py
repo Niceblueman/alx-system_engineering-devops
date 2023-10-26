@@ -4,8 +4,6 @@ import json
 import requests
 
 if __name__ == "__main__":
-    """_summary_
-    """
     url = "https://jsonplaceholder.typicode.com/"
     users = requests.get(url + "users").json()
 
