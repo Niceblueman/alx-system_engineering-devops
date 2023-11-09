@@ -2,7 +2,6 @@
 """function that queries the Reddit API and prints the titles
 of the first 10 hot posts listed for a given subreddit."""
 
-
 def top_ten(subreddit):
     """get top then subreddit posts
 
@@ -10,7 +9,6 @@ def top_ten(subreddit):
         subreddit (str): subreddit id
     """
     import requests
-    import sys
 
     url = "https://www.reddit.com/r/{}/hot.json".format(subreddit)
     headers = {'User-Agent': 'Mozilla/5.0'}
@@ -25,3 +23,7 @@ def top_ten(subreddit):
             print("None")
     except Exception:
         print("None")
+if __name__ == "__main__":
+    result = top_ten("programming")
+    if result is not None:
+            print(len(result))
