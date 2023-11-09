@@ -4,13 +4,9 @@ from requests import get
 
 
 def count_words(subreddit, word_list, word_count=[], page_after=None):
-    """_summary_
-
-    Args:
-        subreddit (_type_): _description_
-        word_list (_type_): _description_
-        word_count (list, optional): _description_. Defaults to [].
-        page_after (_type_, optional): _description_. Defaults to None.
+    """
+    Prints the count of the given words present in the title of the
+    subreddit's hottest articles.
     """
     headers = {'User-Agent': 'HolbertonSchool'}
 
