@@ -17,7 +17,7 @@ def count_words(subreddit, word_list, word_count=[], page_after=None):
             word_count.append(0)
 
     if page_after is None:
-        url = 'https://www.reddit.com/r/{}/hot.json'.format(subreddit)
+        url = 'https://www.reddit.com/r/{}/hot/.json'.format(subreddit)
         r = get(url, headers=headers, allow_redirects=False)
         if r.status_code == 200:
             for child in r.json()['data']['children']:
@@ -33,7 +33,7 @@ def count_words(subreddit, word_list, word_count=[], page_after=None):
                 count_words(subreddit, word_list,
                             word_count, r.json()['data']['after'])
     else:
-        url = ('https://www.reddit.com/r/{}/hot.json?after={}'
+        url = ('https://www.reddit.com/r/{}/hot/.json?after={}'
                .format(subreddit,
                        page_after))
         r = get(url, headers=headers, allow_redirects=False)
